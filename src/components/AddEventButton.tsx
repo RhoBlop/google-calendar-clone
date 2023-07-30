@@ -17,7 +17,7 @@ export default function AddEventButton({ isSidebarOpen }: IAddEventButton) {
                 onClick={() => {
                     setIsModalOpen(true);
                 }}
-                className="google-shadow flex flex-1 items-center justify-center gap-3 rounded-full bg-white p-2 text-sm font-medium text-gray-600"
+                className="google-create-shadow flex flex-1 items-center justify-center gap-3 rounded-full bg-white p-2 text-sm font-medium text-gray-600"
             >
                 <GooglePlus />
                 {isSidebarOpen && <span className="mr-4">Criar</span>}

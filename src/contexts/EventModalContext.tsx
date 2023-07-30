@@ -9,8 +9,8 @@ interface ISetIsModalOpenContext {
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 interface ISelectedDayContext {
-    selectedDay: dayjs.Dayjs | null;
-    setSelectedDay: React.Dispatch<React.SetStateAction<dayjs.Dayjs | null>>;
+    selectedDay: dayjs.Dayjs;
+    setSelectedDay: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>;
 }
 
 // contexts definitions
@@ -32,7 +32,7 @@ export function useIsModalOpen() {
 export function useSetIsModalOpen() {
     return useContext(SetIsModalOpenContext);
 }
-
+// FIXME - I think this should have it's own context
 export function useSelectedDay() {
     return useContext(SelectedDayContext);
 }
@@ -44,8 +44,7 @@ export default function EventModalProvider({
     children: React.ReactNode;
 }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedDay, setSelectedDay] =
-        useState<ISelectedDayContext['selectedDay']>(null);
+    const [selectedDay, setSelectedDay] = useState(dayjs);
 
     return (
         <SelectedDayContext.Provider value={{ selectedDay, setSelectedDay }}>
