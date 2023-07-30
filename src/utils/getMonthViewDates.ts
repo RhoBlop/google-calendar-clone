@@ -1,7 +1,7 @@
 import dayjs, { Dayjs } from 'dayjs';
 
 export default function getMonthViewDates(monthIndx = dayjs().month()) {
-    console.time('monthDates');
+    // console.time('monthDates');
     const monthDatesArr: Dayjs[] = [];
 
     const monthFirstDay = dayjs().month(monthIndx).startOf('M');
@@ -19,6 +19,6 @@ export default function getMonthViewDates(monthIndx = dayjs().month()) {
         currDayCount++;
     }
 
-    console.timeEnd('monthDates');
+    // console.timeEnd('monthDates');
     return monthDatesArr;
 }

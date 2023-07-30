@@ -1,22 +1,22 @@
 import dayjs from 'dayjs';
-import { createContext, useContext, useMemo, useState } from 'react';
-import getMonthViewDates from '../utils/getMonthViewDates';
+import { createContext, useContext, useState } from 'react';
 
-interface IMonthValuesContext {
+interface IMonthIndxContext {
     monthIndx: number;
-    fullMonth: dayjs.Dayjs[];
 }
-type SetMonthIndxContext = React.Dispatch<React.SetStateAction<number>>;
+interface SetMonthIndxContext {
+    setMonthIndx: React.Dispatch<React.SetStateAction<number>>;
+}
 
-const MonthValuesContext = createContext<IMonthValuesContext>(
-    {} as IMonthValuesContext,
+const MonthIndxContext = createContext<IMonthIndxContext>(
+    {} as IMonthIndxContext,
 );
 const SetMonthIndxContext = createContext<SetMonthIndxContext>(
     {} as SetMonthIndxContext,
 );
 
-export function useMonthValues() {
-    return useContext(MonthValuesContext);
+export function useMonthIndx() {
+    return useContext(MonthIndxContext);
 }
 
 export function useSetMonthIndx() {
@@ -29,13 +29,12 @@ export default function MonthProvider({
     children: React.ReactNode;
 }) {
     const [monthIndx, setMonthIndx] = useState(dayjs().month());
-    const fullMonth = useMemo(() => getMonthViewDates(monthIndx), [monthIndx]);
 
     return (
-        <MonthValuesContext.Provider value={{ monthIndx, fullMonth }}>
-            <SetMonthIndxContext.Provider value={setMonthIndx}>
+        <MonthIndxContext.Provider value={{ monthIndx }}>
+            <SetMonthIndxContext.Provider value={{ setMonthIndx }}>
                 {children}
             </SetMonthIndxContext.Provider>
-        </MonthValuesContext.Provider>
+        </MonthIndxContext.Provider>
     );
 }

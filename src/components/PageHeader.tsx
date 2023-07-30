@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import { ChevronLeft, ChevronRight, Menu } from 'react-feather';
+import { MdChevronLeft, MdChevronRight, MdMenu } from 'react-icons/md';
 import CalendarLogo from '../assets/CalendarLogo.png';
-import { useMonthValues, useSetMonthIndx } from '../contexts/MonthContext';
+import { useMonthIndx, useSetMonthIndx } from '../contexts/MonthContext';
 
 const currentMonthIndx = dayjs().month();
 
@@ -10,8 +10,8 @@ interface ICalendarheader {
 }
 
 export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
-    const { monthIndx } = useMonthValues();
-    const setMonthIndx = useSetMonthIndx();
+    const { monthIndx } = useMonthIndx();
+    const { setMonthIndx } = useSetMonthIndx();
 
     const handleNextMonth = () => {
         setMonthIndx(monthIndx + 1);
@@ -20,18 +20,18 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
         setMonthIndx(monthIndx - 1);
     };
     const handleToday = () => {
-        currentMonthIndx !== monthIndx && setMonthIndx(currentMonthIndx);
+        setMonthIndx(currentMonthIndx);
     };
 
     return (
-        <header className="flex h-16 items-center justify-between border-b border-gray-300 p-2">
+        <header className="flex h-14 items-center justify-between border-b border-gray-300 p-2">
             <div className="flex items-center">
-                <div className="p-3">
+                <div className="p-2">
                     <button
                         onClick={toggleSidebar}
-                        className="rounded-full p-3 transition-colors duration-150 hover:bg-gray-100"
+                        className="flex items-center justify-center rounded-full p-3 transition-colors duration-150 hover:bg-gray-100"
                     >
-                        <Menu size={20} className="text-gray-600" />
+                        <MdMenu className="h-5 w-5 text-gray-600" />
                     </button>
                 </div>
                 <div className="mr-12 flex select-none items-center gap-2">
@@ -43,16 +43,16 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
                             img.src = CalendarLogo;
                         }}
                         alt="Google Calendar Logo"
-                        className="h-10"
+                        className="h-9"
                     />
-                    <span className="text-xl font-normal text-gray-800">
+                    <span className="text-xl font-normal text-gray-700">
                         Agenda
                     </span>
                 </div>
                 <div className="flex items-center gap-4">
                     <button
                         onClick={handleToday}
-                        className="rounded border border-gray-200 bg-transparent px-4 py-2 text-sm font-medium text-gray-800 transition-colors duration-150 hover:bg-gray-50"
+                        className="rounded border border-gray-200 bg-transparent px-4 py-2 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50"
                     >
                         Hoje
                     </button>
@@ -61,24 +61,16 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
                             onClick={handlePrevMonth}
                             className="flex items-center justify-center rounded-full p-2 transition-colors duration-150 hover:bg-gray-100"
                         >
-                            <ChevronLeft
-                                className="text-gray-600"
-                                size={20}
-                                strokeWidth={2.5}
-                            />
+                            <MdChevronLeft className="h-5 w-5 text-gray-600" />
                         </button>
                         <button
                             onClick={handleNextMonth}
                             className="flex items-center justify-center rounded-full p-2 transition-colors duration-150 hover:bg-gray-100"
                         >
-                            <ChevronRight
-                                className="text-gray-600"
-                                size={20}
-                                strokeWidth={2.5}
-                            />
+                            <MdChevronRight className="h-5 w-5 text-gray-600" />
                         </button>
                     </div>
-                    <span className="text-xl font-normal text-gray-800">
+                    <span className="text-xl font-normal text-gray-700">
                         {dayjs().month(monthIndx).format(`MMMM [de] YYYY`)}
                     </span>
                 </div>

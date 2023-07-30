@@ -1,4 +1,3 @@
-import LabelsSection from './LabelsSection';
 import SmallCalendar from './SmallCalendar';
 
 interface ISidebar {
@@ -14,7 +13,7 @@ export default function Sidebar({ isOpen }: ISidebar) {
         >
             <div className="mt-16 flex flex-col items-center p-6">
                 <SmallCalendar />
-                <LabelsSection />
+                {/* <LabelsSection /> */}
             </div>
         </div>
     );

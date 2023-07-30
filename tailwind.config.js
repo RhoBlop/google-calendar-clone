@@ -6,6 +6,9 @@ export default {
             fontFamily: {
                 roboto: ['Roboto', 'ui-sans-serif'],
             },
+            fontSize: {
+                xxs: '0.55rem',
+            },
         },
     },
     plugins: [import('@tailwindcss/forms')],
