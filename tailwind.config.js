@@ -7,7 +7,7 @@ export default {
                 roboto: ['Roboto', 'ui-sans-serif'],
             },
             fontSize: {
-                xxs: '0.55rem',
+                xxs: '0.6rem',
             },
         },
     },

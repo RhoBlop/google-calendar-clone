@@ -1,25 +1,17 @@
 import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
-import { useMonthIndx } from '../contexts/MonthContext';
+import { useMemo } from 'react';
+import { useGlobalMonth } from '../contexts/MonthContext';
 import getDayClass from '../utils/getDayClass';
-import getMonthViewDates from '../utils/getMonthViewDates';
+import getMonthDates from '../utils/getMonthDates';
 
 export default function CalendarView() {
-    const { monthIndx } = useMonthIndx();
-    const [prevActivatedMonth, setPrevActivatedMonth] = useState(monthIndx);
-    const [animDirection, setAnimDirection] = useState<'next' | 'prev' | null>(
-        null,
+    const {
+        globalMonth: { animDirection, globalMonthIndx },
+    } = useGlobalMonth();
+    const fullMonth = useMemo(
+        () => getMonthDates(globalMonthIndx),
+        [globalMonthIndx],
     );
-    const fullMonth = useMemo(() => getMonthViewDates(monthIndx), [monthIndx]);
-
-    if (monthIndx !== prevActivatedMonth) {
-        if (monthIndx > prevActivatedMonth) {
-            setAnimDirection('next');
-        } else {
-            setAnimDirection('prev');
-        }
-        setPrevActivatedMonth(monthIndx);
-    }
 
     return (
         <div className="relative flex flex-1">
@@ -27,14 +19,14 @@ export default function CalendarView() {
                 className={`${
                     animDirection ? `${animDirection}-month-anim` : ''
                 } absolute inset-0 grid grid-cols-7 border-l border-gray-300`}
-                key={monthIndx}
+                key={globalMonthIndx}
             >
                 {fullMonth.map((date, indx) => {
                     return (
                         <Day
                             date={date}
                             indx={indx}
-                            monthIndx={monthIndx}
+                            monthIndx={globalMonthIndx}
                             key={indx}
                         />
                     );
@@ -63,10 +55,12 @@ function Day({ date, indx, monthIndx }: IDay) {
                     className={`${getDayClass(
                         date,
                         monthIndx,
-                    )} mt-1 h-[1.5rem] min-w-[1.5rem]`}
+                    )} mt-1 h-[1.5rem] min-w-[1.5rem] transition-transform hover:-translate-y-[0.1rem]`}
                 >
                     {date.format('D')}{' '}
-                    {date.date() === 1 && `${date.format('MMM')}.`}
+                    {date.date() === 1 &&
+                        !date.isSame(dayjs(), 'day') &&
+                        `${date.format('MMM')}.`}
                 </button>
             </div>
         </div>

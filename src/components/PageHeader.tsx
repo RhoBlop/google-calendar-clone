@@ -1,26 +1,49 @@
 import dayjs from 'dayjs';
 import { MdChevronLeft, MdChevronRight, MdMenu } from 'react-icons/md';
+import { googleLogoUrl } from '../App';
 import CalendarLogo from '../assets/CalendarLogo.png';
-import { useMonthIndx, useSetMonthIndx } from '../contexts/MonthContext';
+import { useGlobalMonth, useSmCalMonth } from '../contexts/MonthContext';
 
-const currentMonthIndx = dayjs().month();
+const todaysMonthIndx = dayjs().month();
 
 interface ICalendarheader {
     toggleSidebar: () => void;
 }
 
 export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
-    const { monthIndx } = useMonthIndx();
-    const { setMonthIndx } = useSetMonthIndx();
+    const {
+        globalMonth: { globalMonthIndx },
+        setGlobalMonth,
+    } = useGlobalMonth();
+    const { setSmCalMonthIndx } = useSmCalMonth();
 
     const handleNextMonth = () => {
-        setMonthIndx(monthIndx + 1);
+        setGlobalMonth((prevState) => {
+            return {
+                ...prevState,
+                globalMonthIndx: prevState.globalMonthIndx + 1,
+                animDirection: 'next',
+            };
+        });
+        setSmCalMonthIndx((prevState) => prevState + 1);
     };
     const handlePrevMonth = () => {
-        setMonthIndx(monthIndx - 1);
+        setGlobalMonth((prevState) => {
+            return {
+                ...prevState,
+                globalMonthIndx: prevState.globalMonthIndx - 1,
+                animDirection: 'prev',
+            };
+        });
+        setSmCalMonthIndx((prevState) => prevState - 1);
     };
     const handleToday = () => {
-        setMonthIndx(currentMonthIndx);
+        setGlobalMonth((prevState) => ({
+            ...prevState,
+            globalMonthIndx: todaysMonthIndx,
+            animDirection: null,
+        }));
+        setSmCalMonthIndx(todaysMonthIndx);
     };
 
     return (
@@ -36,7 +59,7 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
                 </div>
                 <div className="mr-12 flex select-none items-center gap-2">
                     <img
-                        src={`https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_28_2x.png`}
+                        src={googleLogoUrl}
                         onError={(e) => {
                             const img = e.currentTarget;
                             img.onerror = null;
@@ -71,7 +94,9 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
                         </button>
                     </div>
                     <span className="text-xl font-normal text-gray-700">
-                        {dayjs().month(monthIndx).format(`MMMM [de] YYYY`)}
+                        {dayjs()
+                            .month(globalMonthIndx)
+                            .format(`MMMM [de] YYYY`)}
                     </span>
                 </div>
             </div>

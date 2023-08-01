@@ -1,26 +1,12 @@
-import dayjs from 'dayjs';
-import { useState } from 'react';
 import { MdClose, MdDragHandle } from 'react-icons/md';
-import {
-    useIsModalOpen,
-    useSelectedDay,
-    useSetIsModalOpen,
-} from '../contexts/EventModalContext';
-
-interface IEventInterval {
-    eventStart: dayjs.Dayjs;
-    eventEnd: dayjs.Dayjs;
-}
+import { useEventForm, useEventModal } from '../contexts/EventModalContext';
 
 export default function EventModal() {
-    const { isModalOpen } = useIsModalOpen();
-    const { setIsModalOpen } = useSetIsModalOpen();
-    const { selectedDay } = useSelectedDay();
-    // form values
-    const [eventInterval, setEventInterval] = useState<IEventInterval>({
-        eventStart: selectedDay,
-        eventEnd: selectedDay,
-    });
+    const { isModalOpen, setIsModalOpen } = useEventModal();
+    const {
+        formEventInterval: { eventStart, eventEnd },
+        setFormEventInterval,
+    } = useEventForm();
 
     return (
         isModalOpen && (
@@ -40,7 +26,7 @@ export default function EventModal() {
 
                 {/* modal body */}
                 <div className="flex flex-1 bg-red-50">
-                    {eventInterval.eventStart.format('DD/MM/YYYY')}
+                    {eventStart.format('DD/MM/YYYY')}
                 </div>
 
                 {/* modal footer  */}

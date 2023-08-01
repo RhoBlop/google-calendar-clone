@@ -1,12 +1,12 @@
 import { ReactComponent as GooglePlus } from '../assets/GooglePlus.svg';
-import { useSetIsModalOpen } from '../contexts/EventModalContext';
+import { useEventModal } from '../contexts/EventModalContext';
 
 interface IAddEventButton {
     isSidebarOpen: boolean;
 }
 
 export default function AddEventButton({ isSidebarOpen }: IAddEventButton) {
-    const { setIsModalOpen } = useSetIsModalOpen();
+    const { setIsModalOpen } = useEventModal();
     return (
         <div
             className={`${

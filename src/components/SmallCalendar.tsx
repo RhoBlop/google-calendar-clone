@@ -1,56 +1,75 @@
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
-import { useSelectedDay } from '../contexts/EventModalContext';
-import { useMonthIndx, useSetMonthIndx } from '../contexts/MonthContext';
+import { useEventForm } from '../contexts/EventModalContext';
+import { useGlobalMonth, useSmCalMonth } from '../contexts/MonthContext';
 import getDayClass from '../utils/getDayClass';
-import getMonthViewDates from '../utils/getMonthViewDates';
+import getMonthDates from '../utils/getMonthDates';
 
 const smallCalendarHeader = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
-// TODO - research rendering of 'prev[state]' technique - does it really
-// re-render the entire component?
 export default function SmallCalendar() {
-    const { monthIndx: globalMonthIndx } = useMonthIndx();
-    const [prevGlobalMonthIndx, setPrevGlobalMonth] = useState(globalMonthIndx);
-    const [localMonthIndx, setLocalMonthInx] = useState(globalMonthIndx);
-    // FIXME - place fullMonth back at MonthContext
+    const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
+    const { setGlobalMonth } = useGlobalMonth();
+    const { smCalMonthIndx, setSmCalMonthIndx } = useSmCalMonth();
+    const { setFormEventInterval } = useEventForm();
+
     const localFullMonth = useMemo(
-        () => getMonthViewDates(localMonthIndx),
-        [localMonthIndx],
+        () => getMonthDates(smCalMonthIndx),
+        [smCalMonthIndx],
     );
 
-    // synchronizes smallCalendar when the globalMonthIndx changes
-    if (prevGlobalMonthIndx !== globalMonthIndx) {
-        setLocalMonthInx(globalMonthIndx);
-        setPrevGlobalMonth(globalMonthIndx);
-    }
-
     const handleNextMonth = () => {
-        setLocalMonthInx(localMonthIndx + 1);
+        setSmCalMonthIndx((prevState) => prevState + 1);
     };
     const handlePrevMonth = () => {
-        setLocalMonthInx(localMonthIndx - 1);
+        setSmCalMonthIndx((prevState) => prevState - 1);
     };
 
+    function handleSelectDate(date: dayjs.Dayjs) {
+        const dateMonthIndx = date.month();
+
+        setGlobalMonth((prevState) => {
+            let newAnimDirection: typeof prevState.animDirection = null;
+
+            if (dateMonthIndx > prevState.globalMonthIndx) {
+                newAnimDirection = 'next';
+            } else if (dateMonthIndx < prevState.globalMonthIndx) {
+                newAnimDirection = 'prev';
+            }
+
+            return {
+                ...prevState,
+                globalMonthIndx: dateMonthIndx,
+                animDirection: newAnimDirection,
+            };
+        });
+        setSmCalMonthIndx(dateMonthIndx);
+        setSelectedDate(date);
+        setFormEventInterval({
+            eventStart: date,
+            eventEnd: date,
+        });
+    }
+
     return (
-        <div className="w-full select-none text-xs">
+        <div className="w-full select-none text-sm">
             <div className="mb-2 flex items-center justify-between">
                 <div className="ml-1 font-medium text-gray-600">
-                    {dayjs().month(localMonthIndx).format(`MMMM [de] YYYY`)}
+                    {dayjs().month(smCalMonthIndx).format(`MMMM [de] YYYY`)}
                 </div>
                 <div className="flex items-center">
                     <button
                         onClick={handlePrevMonth}
                         className="flex items-center justify-center rounded-full p-1 transition-colors duration-150 hover:bg-gray-100"
                     >
-                        <MdChevronLeft className="h-4 w-4 text-gray-600" />
+                        <MdChevronLeft className="h-5 w-5 text-gray-600" />
                     </button>
                     <button
                         onClick={handleNextMonth}
                         className="flex items-center justify-center rounded-full p-1 transition-colors duration-150 hover:bg-gray-100"
                     >
-                        <MdChevronRight className="h-4 w-4 text-gray-600" />
+                        <MdChevronRight className="h-5 w-5 text-gray-600" />
                     </button>
                 </div>
             </div>
@@ -71,7 +90,9 @@ export default function SmallCalendar() {
                         <Day
                             key={indx}
                             date={date}
-                            monthIndx={localMonthIndx}
+                            monthIndx={smCalMonthIndx}
+                            isSelected={date.isSame(selectedDate, 'day')}
+                            handleSelectDate={handleSelectDate}
                         />
                     );
                 })}
@@ -83,21 +104,15 @@ export default function SmallCalendar() {
 interface IDay {
     date: dayjs.Dayjs;
     monthIndx: number;
+    isSelected: boolean;
+    handleSelectDate: (date: IDay['date']) => void;
 }
 
-function Day({ date, monthIndx }: IDay) {
-    const { selectedDay, setSelectedDay } = useSelectedDay();
-    const { setMonthIndx: setGlobalMonthIndx } = useSetMonthIndx();
-
-    function handleSelectDay() {
-        setSelectedDay(date);
-        setGlobalMonthIndx(date.month());
-    }
-
+function Day({ date, monthIndx, isSelected, handleSelectDate }: IDay) {
     return (
         <button
-            className={`${getDayClass(date, monthIndx, selectedDay)} h-5 w-5`}
-            onClick={handleSelectDay}
+            className={`${getDayClass(date, monthIndx, isSelected)} h-5 w-5`}
+            onClick={() => handleSelectDate(date)}
         >
             {date.format('D')}
         </button>

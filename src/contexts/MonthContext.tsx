@@ -1,40 +1,65 @@
 import dayjs from 'dayjs';
 import { createContext, useContext, useState } from 'react';
 
-interface IMonthIndxContext {
-    monthIndx: number;
+// Big Calendar - "global" - context
+interface IGlobalMonthState {
+    globalMonthIndx: number;
+    animDirection: 'next' | 'prev' | null;
 }
-interface SetMonthIndxContext {
-    setMonthIndx: React.Dispatch<React.SetStateAction<number>>;
+interface IGlobalMonthContext {
+    globalMonth: IGlobalMonthState;
+    setGlobalMonth: React.Dispatch<React.SetStateAction<IGlobalMonthState>>;
+}
+const GlobalMonthContext = createContext<IGlobalMonthContext | null>(null);
+
+export function useGlobalMonth() {
+    const context = useContext(GlobalMonthContext);
+    if (context === null) {
+        throw Error('Context not Provided');
+    }
+
+    return context;
 }
 
-const MonthIndxContext = createContext<IMonthIndxContext>(
-    {} as IMonthIndxContext,
+// Sidebar calendar - the small one - context
+interface ISmallCalendarMonthContext {
+    smCalMonthIndx: number;
+    setSmCalMonthIndx: React.Dispatch<React.SetStateAction<number>>;
+}
+const SmCalMonthContext = createContext<ISmallCalendarMonthContext | null>(
+    null,
 );
-const SetMonthIndxContext = createContext<SetMonthIndxContext>(
-    {} as SetMonthIndxContext,
-);
 
-export function useMonthIndx() {
-    return useContext(MonthIndxContext);
+export function useSmCalMonth() {
+    const context = useContext(SmCalMonthContext);
+    if (context === null) {
+        throw Error('Context not Provided');
+    }
+
+    return context;
 }
 
-export function useSetMonthIndx() {
-    return useContext(SetMonthIndxContext);
-}
+// provider for both contexts
+const todaysMonthIndx = dayjs().month();
 
 export default function MonthProvider({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const [monthIndx, setMonthIndx] = useState(dayjs().month());
+    const [globalMonth, setGlobalMonth] = useState<IGlobalMonthState>({
+        globalMonthIndx: todaysMonthIndx,
+        animDirection: null,
+    });
+    const [smCalMonthIndx, setSmCalMonthIndx] = useState(todaysMonthIndx);
 
     return (
-        <MonthIndxContext.Provider value={{ monthIndx }}>
-            <SetMonthIndxContext.Provider value={{ setMonthIndx }}>
+        <GlobalMonthContext.Provider value={{ globalMonth, setGlobalMonth }}>
+            <SmCalMonthContext.Provider
+                value={{ smCalMonthIndx, setSmCalMonthIndx }}
+            >
                 {children}
-            </SetMonthIndxContext.Provider>
-        </MonthIndxContext.Provider>
+            </SmCalMonthContext.Provider>
+        </GlobalMonthContext.Provider>
     );
 }

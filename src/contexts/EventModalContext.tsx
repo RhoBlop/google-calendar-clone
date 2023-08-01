@@ -2,40 +2,46 @@ import dayjs from 'dayjs';
 import { createContext, useContext, useState } from 'react';
 import EventModal from '../components/EventModal';
 
-interface IIsModalOpenContext {
+interface IEventModalContext {
     isModalOpen: boolean;
-}
-interface ISetIsModalOpenContext {
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-interface ISelectedDayContext {
-    selectedDay: dayjs.Dayjs;
-    setSelectedDay: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>;
+
+interface IFormEventIntervalState {
+    eventStart: dayjs.Dayjs;
+    eventEnd: dayjs.Dayjs;
+}
+interface IEventFormContext {
+    formEventInterval: IFormEventIntervalState;
+    setFormEventInterval: React.Dispatch<
+        React.SetStateAction<IFormEventIntervalState>
+    >;
 }
 
 // contexts definitions
-const IsModalOpenContext = createContext<IIsModalOpenContext>(
-    {} as IIsModalOpenContext,
-);
-const SetIsModalOpenContext = createContext<ISetIsModalOpenContext>(
-    {} as ISetIsModalOpenContext,
-);
+const EventModalContext = createContext<IEventModalContext | null>(null);
 // for some reason i decided not to split this context :/
-const SelectedDayContext = createContext<ISelectedDayContext>(
-    {} as ISelectedDayContext,
-);
+const EventFormContext = createContext<IEventFormContext | null>(null);
 
 // hooks for accessing the context
-export function useIsModalOpen() {
-    return useContext(IsModalOpenContext);
+export function useEventModal() {
+    const context = useContext(EventModalContext);
+    if (context === null) {
+        throw Error('Context not Provided');
+    }
+
+    return context;
 }
-export function useSetIsModalOpen() {
-    return useContext(SetIsModalOpenContext);
+export function useEventForm() {
+    const context = useContext(EventFormContext);
+    if (context === null) {
+        throw Error('Context not Provided');
+    }
+
+    return context;
 }
-// FIXME - I think this should have it's own context
-export function useSelectedDay() {
-    return useContext(SelectedDayContext);
-}
+
+const today = dayjs();
 
 // Provider that wraps all contexts
 export default function EventModalProvider({
@@ -44,16 +50,20 @@ export default function EventModalProvider({
     children: React.ReactNode;
 }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedDay, setSelectedDay] = useState(dayjs);
+    const [formEventInterval, setFormEventInterval] =
+        useState<IFormEventIntervalState>({
+            eventStart: today,
+            eventEnd: today,
+        });
 
     return (
-        <SelectedDayContext.Provider value={{ selectedDay, setSelectedDay }}>
-            <IsModalOpenContext.Provider value={{ isModalOpen }}>
-                <SetIsModalOpenContext.Provider value={{ setIsModalOpen }}>
-                    {children}
-                    <EventModal />
-                </SetIsModalOpenContext.Provider>
-            </IsModalOpenContext.Provider>
-        </SelectedDayContext.Provider>
+        <EventFormContext.Provider
+            value={{ formEventInterval, setFormEventInterval }}
+        >
+            <EventModalContext.Provider value={{ isModalOpen, setIsModalOpen }}>
+                {children}
+                <EventModal />
+            </EventModalContext.Provider>
+        </EventFormContext.Provider>
     );
 }
