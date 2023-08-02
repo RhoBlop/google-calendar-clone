@@ -10,7 +10,7 @@ const smallCalendarHeader = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
 export default function SmallCalendar() {
     const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
-    const { setGlobalMonth } = useGlobalMonth();
+    const { handleSetGlobalMonth } = useGlobalMonth();
     const { smCalMonthIndx, setSmCalMonthIndx } = useSmCalMonth();
     const { setFormEventInterval } = useEventForm();
 
@@ -27,24 +27,9 @@ export default function SmallCalendar() {
     };
 
     function handleSelectDate(date: dayjs.Dayjs) {
-        const dateMonthIndx = date.month();
+        // const dateMonthIndx = date.month();
 
-        setGlobalMonth((prevState) => {
-            let newAnimDirection: typeof prevState.animDirection = null;
-
-            if (dateMonthIndx > prevState.globalMonthIndx) {
-                newAnimDirection = 'next';
-            } else if (dateMonthIndx < prevState.globalMonthIndx) {
-                newAnimDirection = 'prev';
-            }
-
-            return {
-                ...prevState,
-                globalMonthIndx: dateMonthIndx,
-                animDirection: newAnimDirection,
-            };
-        });
-        setSmCalMonthIndx(dateMonthIndx);
+        handleSetGlobalMonth({ monthIndx: date.month() });
         setSelectedDate(date);
         setFormEventInterval({
             eventStart: date,

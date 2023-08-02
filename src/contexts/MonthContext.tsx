@@ -6,9 +6,13 @@ interface IGlobalMonthState {
     globalMonthIndx: number;
     animDirection: 'next' | 'prev' | null;
 }
+type IHandleSetGlobalMonth = {
+    monthIndx?: number;
+    incrementVal?: number;
+};
 interface IGlobalMonthContext {
     globalMonth: IGlobalMonthState;
-    setGlobalMonth: React.Dispatch<React.SetStateAction<IGlobalMonthState>>;
+    handleSetGlobalMonth: (obj: IHandleSetGlobalMonth) => void;
 }
 const GlobalMonthContext = createContext<IGlobalMonthContext | null>(null);
 
@@ -53,8 +57,48 @@ export default function MonthProvider({
     });
     const [smCalMonthIndx, setSmCalMonthIndx] = useState(todaysMonthIndx);
 
+    // you can both set to a specific monthIndx or increment some value
+    function handleSetGlobalMonth({
+        monthIndx,
+        incrementVal,
+    }: IHandleSetGlobalMonth) {
+        const { globalMonthIndx, animDirection } = globalMonth;
+        let newMonthIndx: number | null = null;
+        let newAnimDirection: typeof animDirection = null;
+
+        if (monthIndx) {
+            newMonthIndx = monthIndx;
+        } else if (incrementVal) {
+            newMonthIndx = globalMonthIndx + incrementVal;
+        }
+
+        if (!newMonthIndx) {
+            return;
+        }
+        if (newMonthIndx > globalMonthIndx) {
+            newAnimDirection = 'next';
+        } else if (newMonthIndx < globalMonthIndx) {
+            newAnimDirection = 'prev';
+        }
+
+        setGlobalMonth((prevState) => {
+            if (!newMonthIndx) {
+                return prevState;
+            }
+
+            return {
+                ...prevState,
+                globalMonthIndx: newMonthIndx,
+                animDirection: newAnimDirection,
+            };
+        });
+        setSmCalMonthIndx(newMonthIndx);
+    }
+
     return (
-        <GlobalMonthContext.Provider value={{ globalMonth, setGlobalMonth }}>
+        <GlobalMonthContext.Provider
+            value={{ globalMonth, handleSetGlobalMonth }}
+        >
             <SmCalMonthContext.Provider
                 value={{ smCalMonthIndx, setSmCalMonthIndx }}
             >

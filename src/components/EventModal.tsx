@@ -9,8 +9,12 @@ export default function EventModal() {
     } = useEventForm();
 
     return (
-        isModalOpen && (
-            <div className="google-modal-shadow absolute left-1/2 top-1/2 z-50 flex h-96 min-w-[456px] -translate-x-1/2 -translate-y-1/2 flex-col border bg-white">
+        <div
+            className={`${
+                isModalOpen ? '-translate-x-1/2 opacity-100' : 'opacity-0'
+            } absolute left-1/2 top-1/2 z-50 flex h-96 min-w-[456px] -translate-y-1/2 transition-all`}
+        >
+            <div className="google-modal-shadow flex flex-1 flex-col border bg-white">
                 {/* modal header */}
                 <div className="flex items-center justify-between bg-gray-100 px-3 py-1">
                     <button className="flex h-6 w-6 items-center justify-center rounded-full p-1 hover:bg-gray-200">
@@ -38,6 +42,6 @@ export default function EventModal() {
                     </div>
                 </div>
             </div>
-        )
+        </div>
     );
 }

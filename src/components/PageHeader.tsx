@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { MdChevronLeft, MdChevronRight, MdMenu } from 'react-icons/md';
 import { googleLogoUrl } from '../App';
 import CalendarLogo from '../assets/CalendarLogo.png';
-import { useGlobalMonth, useSmCalMonth } from '../contexts/MonthContext';
+import { useGlobalMonth } from '../contexts/MonthContext';
 
 const todaysMonthIndx = dayjs().month();
 
@@ -13,37 +13,17 @@ interface ICalendarheader {
 export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
     const {
         globalMonth: { globalMonthIndx },
-        setGlobalMonth,
+        handleSetGlobalMonth,
     } = useGlobalMonth();
-    const { setSmCalMonthIndx } = useSmCalMonth();
 
     const handleNextMonth = () => {
-        setGlobalMonth((prevState) => {
-            return {
-                ...prevState,
-                globalMonthIndx: prevState.globalMonthIndx + 1,
-                animDirection: 'next',
-            };
-        });
-        setSmCalMonthIndx((prevState) => prevState + 1);
+        handleSetGlobalMonth({ incrementVal: 1 });
     };
     const handlePrevMonth = () => {
-        setGlobalMonth((prevState) => {
-            return {
-                ...prevState,
-                globalMonthIndx: prevState.globalMonthIndx - 1,
-                animDirection: 'prev',
-            };
-        });
-        setSmCalMonthIndx((prevState) => prevState - 1);
+        handleSetGlobalMonth({ incrementVal: -1 });
     };
     const handleToday = () => {
-        setGlobalMonth((prevState) => ({
-            ...prevState,
-            globalMonthIndx: todaysMonthIndx,
-            animDirection: null,
-        }));
-        setSmCalMonthIndx(todaysMonthIndx);
+        handleSetGlobalMonth({ monthIndx: todaysMonthIndx });
     };
 
     return (
