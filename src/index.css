@@ -2,11 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-.google-create-shadow {
+.google-create {
     box-shadow: 0px 1px 2px 0px rgba(60,64,67,0.3),0px 1px 3px 1px rgba(60,64,67,0.15);
 }
 
-.google-create-shadow:hover {
+.google-create::after {
+
+}
+
+.google-create:active::after {
+
+}
+
+.google-create:hover {
+    background-color: #f6fafe;
     box-shadow: 0px 4px 4px 0px rgba(60,64,67,0.3),0px 8px 12px 6px rgba(60,64,67,0.15);
 }
 
