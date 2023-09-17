@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
 import { MdChevronLeft, MdChevronRight, MdMenu } from 'react-icons/md';
 import { googleLogoUrl } from '../App';
-import CalendarLogo from '../assets/CalendarLogo.png';
 import { useGlobalMonth } from '../contexts/MonthContext';
+import { useEventForm } from '../contexts/EventModalContext';
 
-const todaysMonthIndx = dayjs().month();
+const today = dayjs();
 
 interface ICalendarheader {
     toggleSidebar: () => void;
@@ -15,6 +15,7 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
         globalMonth: { globalMonthIndx },
         handleSetGlobalMonth,
     } = useGlobalMonth();
+    const { setEventDay } = useEventForm();
 
     const handleNextMonth = () => {
         handleSetGlobalMonth({ incrementVal: 1 });
@@ -23,7 +24,8 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
         handleSetGlobalMonth({ incrementVal: -1 });
     };
     const handleToday = () => {
-        handleSetGlobalMonth({ monthIndx: todaysMonthIndx });
+        handleSetGlobalMonth({ monthIndx: today.month() });
+        setEventDay(today);
     };
 
     return (
@@ -40,11 +42,6 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
                 <div className="mr-12 flex select-none items-center gap-2">
                     <img
                         src={googleLogoUrl}
-                        onError={(e) => {
-                            const img = e.currentTarget;
-                            img.onerror = null;
-                            img.src = CalendarLogo;
-                        }}
                         alt="Google Calendar Logo"
                         className="h-9"
                     />

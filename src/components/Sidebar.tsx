@@ -1,3 +1,6 @@
+import dayjs from 'dayjs';
+import { useEventForm } from '../contexts/EventModalContext';
+import { useGlobalMonth, useSmCalMonth } from '../contexts/MonthContext';
 import SmallCalendar from './SmallCalendar';
 
 interface ISidebar {
@@ -12,9 +15,36 @@ export default function Sidebar({ isOpen }: ISidebar) {
             } w-64 overflow-hidden transition-all duration-300 ease-in`}
         >
             <div className="mt-16 flex flex-col items-center p-6">
-                <SmallCalendar />
+                <SideBarCallendar />
                 {/* <LabelsSection /> */}
             </div>
         </div>
+    );
+}
+
+function SideBarCallendar() {
+    const { handleSetGlobalMonth } = useGlobalMonth();
+    const { smCalMonthIndx, setSmCalMonthIndx } = useSmCalMonth();
+    const { setEventDay } = useEventForm();
+
+    const handleNextMonth = () => {
+        setSmCalMonthIndx((prevState) => prevState + 1);
+    };
+    const handlePrevMonth = () => {
+        setSmCalMonthIndx((prevState) => prevState - 1);
+    };
+
+    function handleDayClick(date: dayjs.Dayjs) {
+        handleSetGlobalMonth({ monthIndx: date.month() });
+        setEventDay(date);
+    }
+
+    return (
+        <SmallCalendar
+            monthIndx={smCalMonthIndx}
+            handleNextArrow={handleNextMonth}
+            handlePrevArrow={handlePrevMonth}
+            handleDayClick={handleDayClick}
+        />
     );
 }

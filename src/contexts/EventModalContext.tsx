@@ -1,21 +1,16 @@
 import dayjs from 'dayjs';
 import { createContext, useContext, useState } from 'react';
 import EventModal from '../components/EventModal';
+import '../dayjs.config.ts';
 
 interface IEventModalContext {
     isModalOpen: boolean;
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface IFormEventIntervalState {
-    eventStart: dayjs.Dayjs;
-    eventEnd: dayjs.Dayjs;
-}
 interface IEventFormContext {
-    formEventInterval: IFormEventIntervalState;
-    setFormEventInterval: React.Dispatch<
-        React.SetStateAction<IFormEventIntervalState>
-    >;
+    eventDay: dayjs.Dayjs;
+    setEventDay: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>;
 }
 
 // contexts definitions
@@ -50,16 +45,10 @@ export default function EventModalProvider({
     children: React.ReactNode;
 }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [formEventInterval, setFormEventInterval] =
-        useState<IFormEventIntervalState>({
-            eventStart: today,
-            eventEnd: today,
-        });
+    const [eventDay, setEventDay] = useState(today);
 
     return (
-        <EventFormContext.Provider
-            value={{ formEventInterval, setFormEventInterval }}
-        >
+        <EventFormContext.Provider value={{ eventDay, setEventDay }}>
             <EventModalContext.Provider value={{ isModalOpen, setIsModalOpen }}>
                 {children}
                 <EventModal />

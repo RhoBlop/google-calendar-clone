@@ -28,7 +28,7 @@ function App() {
     return (
         <div
             className="relative flex h-screen flex-col"
-            onClick={() => (isModalOpen ? setIsModalOpen(false) : null)}
+            onClick={() => isModalOpen && setIsModalOpen(false)}
         >
             <PageHeader toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 

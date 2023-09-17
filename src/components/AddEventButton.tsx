@@ -17,10 +17,12 @@ export default function AddEventButton({ isSidebarOpen }: IAddEventButton) {
                 onClick={() => {
                     setIsModalOpen(true);
                 }}
-                className="google-create flex flex-1 items-center justify-center gap-3 rounded-full bg-white p-2 text-sm font-medium text-gray-600 transition-all"
+                className="google-create rounded-full bg-white px-2 py-1 text-sm font-medium text-gray-600 transition-all"
             >
-                <GooglePlus />
-                {isSidebarOpen && <span className="mr-4">Criar</span>}
+                <div className="flex flex-1 items-center justify-center gap-3">
+                    <GooglePlus />
+                    {isSidebarOpen && <span className="mr-4">Criar</span>}
+                </div>
             </button>
         </div>
     );

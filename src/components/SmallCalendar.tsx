@@ -1,57 +1,48 @@
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
-import { useEventForm } from '../contexts/EventModalContext';
-import { useGlobalMonth, useSmCalMonth } from '../contexts/MonthContext';
 import getDayClass from '../utils/getDayClass';
 import getMonthDates from '../utils/getMonthDates';
 
+interface ISmallCalendar {
+    monthIndx: number;
+    handlePrevArrow: () => void;
+    handleNextArrow: () => void;
+    handleDayClick: (date: dayjs.Dayjs) => void;
+}
+
 const smallCalendarHeader = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
-export default function SmallCalendar() {
+export default function SmallCalendar({
+    monthIndx,
+    handlePrevArrow,
+    handleNextArrow,
+    handleDayClick,
+}: ISmallCalendar) {
     const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
-    const { handleSetGlobalMonth } = useGlobalMonth();
-    const { smCalMonthIndx, setSmCalMonthIndx } = useSmCalMonth();
-    const { setFormEventInterval } = useEventForm();
 
-    const localFullMonth = useMemo(
-        () => getMonthDates(smCalMonthIndx),
-        [smCalMonthIndx],
-    );
-
-    const handleNextMonth = () => {
-        setSmCalMonthIndx((prevState) => prevState + 1);
-    };
-    const handlePrevMonth = () => {
-        setSmCalMonthIndx((prevState) => prevState - 1);
-    };
+    const localFullMonth = useMemo(() => getMonthDates(monthIndx), [monthIndx]);
 
     function handleSelectDate(date: dayjs.Dayjs) {
-        // const dateMonthIndx = date.month();
-
-        handleSetGlobalMonth({ monthIndx: date.month() });
+        handleDayClick(date);
         setSelectedDate(date);
-        setFormEventInterval({
-            eventStart: date,
-            eventEnd: date,
-        });
     }
 
     return (
         <div className="w-full select-none text-sm">
             <div className="mb-2 flex items-center justify-between">
                 <div className="ml-1 font-medium text-gray-600">
-                    {dayjs().month(smCalMonthIndx).format(`MMMM [de] YYYY`)}
+                    {dayjs().month(monthIndx).format(`MMMM [de] YYYY`)}
                 </div>
                 <div className="flex items-center">
                     <button
-                        onClick={handlePrevMonth}
+                        onClick={handlePrevArrow}
                         className="flex items-center justify-center rounded-full p-1 transition-colors duration-150 hover:bg-gray-100"
                     >
                         <MdChevronLeft className="h-5 w-5 text-gray-600" />
                     </button>
                     <button
-                        onClick={handleNextMonth}
+                        onClick={handleNextArrow}
                         className="flex items-center justify-center rounded-full p-1 transition-colors duration-150 hover:bg-gray-100"
                     >
                         <MdChevronRight className="h-5 w-5 text-gray-600" />
@@ -75,7 +66,7 @@ export default function SmallCalendar() {
                         <Day
                             key={indx}
                             date={date}
-                            monthIndx={smCalMonthIndx}
+                            monthIndx={monthIndx}
                             isSelected={date.isSame(selectedDate, 'day')}
                             handleSelectDate={handleSelectDate}
                         />
@@ -94,6 +85,9 @@ interface IDay {
 }
 
 function Day({ date, monthIndx, isSelected, handleSelectDate }: IDay) {
+    // FIXME date selections on future years are broken (because .month() gets the monthIndex starting from 0 everytime)
+    // need to do some calculations if date is not from current year
+
     return (
         <button
             className={`${getDayClass(date, monthIndx, isSelected)} h-5 w-5`}
