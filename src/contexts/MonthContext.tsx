@@ -62,7 +62,6 @@ export default function MonthProvider({
         monthIndx,
         incrementVal,
     }: IHandleSetGlobalMonth) {
-        console.log(monthIndx, incrementVal);
         const { globalMonthIndx, animDirection } = globalMonth;
         let newMonthIndx: number | null = null;
         let newAnimDirection: typeof animDirection = null;
