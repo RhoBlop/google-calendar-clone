@@ -15,7 +15,7 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
         globalMonth: { globalMonthIndx },
         handleSetGlobalMonth,
     } = useGlobalMonth();
-    const { setEventDay } = useEventForm();
+    const { setEventFormData } = useEventForm();
 
     const handleNextMonth = () => {
         handleSetGlobalMonth({ incrementVal: 1 });
@@ -25,7 +25,7 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
     };
     const handleToday = () => {
         handleSetGlobalMonth({ monthIndx: today.month() });
-        setEventDay(today);
+        setEventFormData((prev) => ({ ...prev, eventDay: today }));
     };
 
     return (

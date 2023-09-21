@@ -6,7 +6,7 @@ interface IAddEventButton {
 }
 
 export default function AddEventButton({ isSidebarOpen }: IAddEventButton) {
-    const { setIsModalOpen } = useEventModal();
+    const { setModalAction } = useEventModal();
     return (
         <div
             className={`${
@@ -15,7 +15,7 @@ export default function AddEventButton({ isSidebarOpen }: IAddEventButton) {
         >
             <button
                 onClick={() => {
-                    setIsModalOpen(true);
+                    setModalAction('CREATE');
                 }}
                 className="google-create rounded-full bg-white px-2 py-1 text-sm font-medium text-gray-600 transition-all"
             >

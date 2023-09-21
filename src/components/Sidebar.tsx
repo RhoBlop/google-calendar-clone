@@ -25,7 +25,7 @@ export default function Sidebar({ isOpen }: ISidebar) {
 function SideBarCallendar() {
     const { handleSetGlobalMonth } = useGlobalMonth();
     const { smCalMonthIndx, setSmCalMonthIndx } = useSmCalMonth();
-    const { setEventDay } = useEventForm();
+    const { setEventFormData } = useEventForm();
 
     const handleNextMonth = () => {
         setSmCalMonthIndx((prevState) => prevState + 1);
@@ -36,7 +36,7 @@ function SideBarCallendar() {
 
     function handleDayClick(date: dayjs.Dayjs) {
         handleSetGlobalMonth({ monthIndx: date.month() });
-        setEventDay(date);
+        setEventFormData((prev) => ({ ...prev, eventDay: date }));
     }
 
     return (

@@ -11,15 +11,17 @@ interface IEvent {
 }
 
 // EVENT REDUCER
-interface EventsAction {
-    type: 'ADD' | 'UPDATE' | 'DELETE';
-    payload: IEvent;
-}
+type EventsAction =
+    | {
+          type: 'CREATE' | 'UPDATE';
+          payload: IEvent;
+      }
+    | { type: 'DELETE'; payload: { id: string } };
 
 function eventsReducer(state: IEvent[], { type, payload }: EventsAction) {
     let newEvents = state;
     switch (type) {
-        case 'ADD':
+        case 'CREATE':
             newEvents = [...state, payload];
             updateLocalStorage(newEvents);
             break;
@@ -46,9 +48,7 @@ function eventsReducer(state: IEvent[], { type, payload }: EventsAction) {
 // CONTEXT
 interface IEventsContext {
     savedEvents: IEvent[];
-    addEvent: (event: IEvent) => void;
-    updateEvent: (event: IEvent) => void;
-    deleteEvent: (event: IEvent) => void;
+    eventsDispatch: (action: EventsAction) => void;
 }
 
 const EventsContext = createContext<IEventsContext | null>(null);
@@ -69,22 +69,8 @@ export default function EventsProvider({
 }) {
     const [events, eventsDispatch] = useReducer(eventsReducer, initialEvents);
 
-    const addEvent = (event: IEvent) => {
-        eventsDispatch({ type: 'ADD', payload: event });
-    };
-
-    const updateEvent = (event: IEvent) => {
-        eventsDispatch({ type: 'UPDATE', payload: event });
-    };
-
-    const deleteEvent = (event: IEvent) => {
-        eventsDispatch({ type: 'DELETE', payload: event });
-    };
-
     return (
-        <EventsContext.Provider
-            value={{ savedEvents: events, addEvent, updateEvent, deleteEvent }}
-        >
+        <EventsContext.Provider value={{ savedEvents: events, eventsDispatch }}>
             {children}
         </EventsContext.Provider>
     );

@@ -13,7 +13,7 @@ export const googleLogoUrl = `https://ssl.gstatic.com/calendar/images/dynamiclog
 
 function App() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const { isModalOpen, setIsModalOpen } = useEventModal();
+    const { modalAction, setModalAction } = useEventModal();
 
     useEffect(() => {
         let link = document.querySelector("link[rel~='icon']");
@@ -28,7 +28,7 @@ function App() {
     return (
         <div
             className="relative flex h-screen flex-col"
-            onClick={() => isModalOpen && setIsModalOpen(false)}
+            onClick={() => modalAction && setModalAction(null)}
         >
             <PageHeader toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 

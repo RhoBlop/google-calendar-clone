@@ -1,37 +1,77 @@
-import { useEffect, useRef, useState } from 'react';
-import { MdAccessTime, MdClose, MdDragHandle, MdNotes } from 'react-icons/md';
+import { useEffect, useRef } from 'react';
+import { MdAccessTime, MdClose, MdDelete, MdNotes } from 'react-icons/md';
 import { useEventForm, useEventModal } from '../contexts/EventModalContext';
 import DatePicker from './DatePicker';
 import { useSavedEvents } from '../contexts/EventsContext';
+import dayjs from 'dayjs';
 
+// kinda messy 'cause works for both create, update and deleting
 export default function EventModal() {
-    const [formData, setFormData] = useState({ title: '', description: '' });
-    const { isModalOpen, setIsModalOpen } = useEventModal();
-    const { eventDay, setEventDay } = useEventForm();
-    const { addEvent } = useSavedEvents();
+    const {
+        eventFormData: { eventId, eventDay, title, description },
+        setEventFormData,
+    } = useEventForm();
+    const { modalAction, setModalAction } = useEventModal();
+    const { eventsDispatch } = useSavedEvents();
     const emailInput = useRef<HTMLInputElement | null>(null);
 
     const handleCreateEvent = () => {
-        addEvent({
-            id: eventDay.format(),
-            date: eventDay.format('YYYY-MM-DD'),
-            title: formData.title,
-            description: formData.description,
+        eventsDispatch({
+            type: 'CREATE',
+            payload: {
+                id: eventDay.format(),
+                date: eventDay.format('YYYY-MM-DD'),
+                title,
+                description,
+            },
         });
-        setFormData({ title: '', description: '' });
+        setEventFormData({
+            eventId: null,
+            eventDay: dayjs(),
+            title: '',
+            description: '',
+        });
+        setModalAction(null);
+    };
+
+    const handleUpdateEvent = () => {
+        if (eventId) {
+            eventsDispatch({
+                type: 'UPDATE',
+                payload: {
+                    id: eventId,
+                    date: eventDay.format('YYYY-MM-DD'),
+                    title,
+                    description,
+                },
+            });
+            setModalAction(null);
+        }
+    };
+
+    const handleDeleteEvent = () => {
+        if (eventId) {
+            eventsDispatch({
+                type: 'DELETE',
+                payload: {
+                    id: eventId,
+                },
+            });
+            setModalAction(null);
+        }
     };
 
     // bad effect, but easier to do for now (and forever)
     useEffect(() => {
-        if (emailInput.current) {
+        if (modalAction && emailInput.current) {
             emailInput.current.focus();
         }
-    }, [isModalOpen]);
+    }, [modalAction]);
 
     return (
         <div
             className={`${
-                isModalOpen
+                modalAction
                     ? '-translate-x-1/2 opacity-100'
                     : 'hidden opacity-0'
             } absolute left-1/2 top-1/2 z-40 flex min-w-[456px] -translate-y-1/2 transition-all`}
@@ -39,11 +79,16 @@ export default function EventModal() {
             <div className="google-modal-shadow flex flex-1 flex-col border bg-white">
                 {/* modal header */}
                 <div className="flex items-center justify-between bg-gray-100 px-3 py-1">
-                    <button className="flex h-6 w-6 items-center justify-center rounded-full p-1 hover:bg-gray-200">
-                        <MdDragHandle className="h-full w-full text-gray-400" />
-                    </button>
+                    {modalAction === 'EDIT' && (
+                        <button
+                            onClick={handleDeleteEvent}
+                            className="flex h-6 w-6 items-center justify-center rounded-full p-1 hover:bg-gray-200"
+                        >
+                            <MdDelete className="h-full w-full font-bold text-red-600" />
+                        </button>
+                    )}
                     <button
-                        onClick={() => setIsModalOpen(false)}
+                        onClick={() => setModalAction(null)}
                         className="flex h-6 w-6 items-center justify-center rounded-full p-1 hover:bg-gray-200"
                     >
                         <MdClose className="h-full w-full font-bold text-gray-600" />
@@ -59,12 +104,12 @@ export default function EventModal() {
                                 type="text"
                                 className="w-full border-0 border-b-[1px] border-gray-400 bg-transparent p-0 text-lg outline-none transition-all focus:border-blue-700 focus:ring-0"
                                 placeholder="Adicionar título e horário"
-                                value={formData.title}
+                                value={title}
                                 onChange={(e) => {
-                                    setFormData({
-                                        ...formData,
+                                    setEventFormData((prev) => ({
+                                        ...prev,
                                         title: e.currentTarget.value,
-                                    });
+                                    }));
                                 }}
                                 ref={emailInput}
                             />
@@ -79,7 +124,12 @@ export default function EventModal() {
                         <div className="flex flex-1 items-center">
                             <DatePicker
                                 date={eventDay}
-                                handleSelectDate={setEventDay}
+                                handleSelectDate={(date) =>
+                                    setEventFormData((prev) => ({
+                                        ...prev,
+                                        eventDay: date,
+                                    }))
+                                }
                             />
                         </div>
                     </div>
@@ -91,18 +141,19 @@ export default function EventModal() {
                         <div className="flex flex-1 items-start">
                             <textarea
                                 className="w-full resize-none overflow-auto overscroll-none border-[1px] border-gray-400 p-2 text-sm focus:border-blue-500 focus:ring-0"
-                                value={formData.description}
+                                value={description}
                                 onInput={(e) => {
                                     const textarea = e.currentTarget;
+                                    // FIXME isn't working
                                     textarea.style.height = '';
                                     textarea.style.height = `${
                                         textarea.scrollHeight + 3
                                     }px`;
 
-                                    setFormData({
-                                        ...formData,
+                                    setEventFormData((prev) => ({
+                                        ...prev,
                                         description: textarea.value,
-                                    });
+                                    }));
                                 }}
                             ></textarea>
                         </div>
@@ -114,7 +165,20 @@ export default function EventModal() {
                     <div className="flex items-center justify-end p-3">
                         <button
                             className="rounded bg-blue-500 px-5 py-[0.35rem] text-sm text-white transition-all hover:bg-blue-600"
-                            onClick={handleCreateEvent}
+                            onClick={() => {
+                                switch (modalAction) {
+                                    case 'CREATE':
+                                        handleCreateEvent();
+                                        break;
+
+                                    case 'EDIT':
+                                        handleUpdateEvent();
+                                        break;
+
+                                    default:
+                                        console.error('Invalid MODAL_ACTION');
+                                }
+                            }}
                         >
                             Salvar
                         </button>

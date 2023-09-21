@@ -3,14 +3,23 @@ import { createContext, useContext, useState } from 'react';
 import EventModal from '../components/EventModal';
 import '../dayjs.config.ts';
 
+type ModalAction = 'CREATE' | 'EDIT' | null;
+
 interface IEventModalContext {
-    isModalOpen: boolean;
-    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    modalAction: ModalAction;
+    setModalAction: React.Dispatch<React.SetStateAction<ModalAction>>;
+}
+
+interface IEventFormData {
+    eventId: string | null;
+    eventDay: dayjs.Dayjs;
+    title: string;
+    description: string;
 }
 
 interface IEventFormContext {
-    eventDay: dayjs.Dayjs;
-    setEventDay: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>;
+    eventFormData: IEventFormData;
+    setEventFormData: React.Dispatch<React.SetStateAction<IEventFormData>>;
 }
 
 // contexts definitions
@@ -44,12 +53,17 @@ export default function EventModalProvider({
 }: {
     children: React.ReactNode;
 }) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [eventDay, setEventDay] = useState(today);
+    const [modalAction, setModalAction] = useState<ModalAction>(null);
+    const [eventFormData, setEventFormData] = useState<IEventFormData>({
+        eventId: null,
+        eventDay: today,
+        title: '',
+        description: '',
+    });
 
     return (
-        <EventFormContext.Provider value={{ eventDay, setEventDay }}>
-            <EventModalContext.Provider value={{ isModalOpen, setIsModalOpen }}>
+        <EventFormContext.Provider value={{ eventFormData, setEventFormData }}>
+            <EventModalContext.Provider value={{ modalAction, setModalAction }}>
                 {children}
                 <EventModal />
             </EventModalContext.Provider>
