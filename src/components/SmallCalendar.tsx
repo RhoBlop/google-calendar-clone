@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import getDayClass from '../utils/getDayClass';
 import getMonthDates from '../utils/getMonthDates';
+import { convertToMonthAndYear } from '../utils/dateConvertions';
 
 interface ISmallCalendar {
     monthIndx: number;
@@ -32,7 +33,7 @@ export default function SmallCalendar({
         <div className="w-full select-none text-sm">
             <div className="mb-2 flex items-center justify-between">
                 <div className="ml-1 font-medium text-gray-600">
-                    {dayjs().month(monthIndx).format(`MMMM [de] YYYY`)}
+                    {convertToMonthAndYear(dayjs().month(monthIndx))}
                 </div>
                 <div className="flex items-center">
                     <button

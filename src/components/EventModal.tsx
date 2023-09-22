@@ -4,6 +4,7 @@ import { useEventForm, useEventModal } from '../contexts/EventModalContext';
 import DatePicker from './DatePicker';
 import { useSavedEvents } from '../contexts/EventsContext';
 import dayjs from 'dayjs';
+import { dateAsId, convertDateToSaveFormat } from '../utils/dateConvertions';
 
 // kinda messy 'cause works for both create, update and deleting
 export default function EventModal() {
@@ -19,8 +20,8 @@ export default function EventModal() {
         eventsDispatch({
             type: 'CREATE',
             payload: {
-                id: eventDay.format(),
-                date: eventDay.format('YYYY-MM-DD'),
+                id: dateAsId(),
+                date: convertDateToSaveFormat(eventDay),
                 title,
                 description,
             },
@@ -40,7 +41,7 @@ export default function EventModal() {
                 type: 'UPDATE',
                 payload: {
                     id: eventId,
-                    date: eventDay.format('YYYY-MM-DD'),
+                    date: convertDateToSaveFormat(eventDay),
                     title,
                     description,
                 },

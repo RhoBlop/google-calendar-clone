@@ -10,6 +10,10 @@ interface IEvent {
     description: string;
 }
 
+interface savedEvents {
+    [key: string]: IEvent[];
+}
+
 // EVENT REDUCER
 type EventsAction =
     | {
@@ -18,11 +22,16 @@ type EventsAction =
       }
     | { type: 'DELETE'; payload: { id: string } };
 
-function eventsReducer(state: IEvent[], { type, payload }: EventsAction) {
+function eventsReducer(state: savedEvents, { type, payload }: EventsAction) {
     let newEvents = state;
     switch (type) {
         case 'CREATE':
-            newEvents = [...state, payload];
+            newEvents = { ...state };
+            if (newEvents[payload.date]) {
+                newEvents[payload.date].push(payload);
+            } else {
+                newEvents[payload.date] = [payload];
+            }
             updateLocalStorage(newEvents);
             break;
 
@@ -47,7 +56,7 @@ function eventsReducer(state: IEvent[], { type, payload }: EventsAction) {
 
 // CONTEXT
 interface IEventsContext {
-    savedEvents: IEvent[];
+    savedEvents: savedEvents;
     eventsDispatch: (action: EventsAction) => void;
 }
 
@@ -55,9 +64,9 @@ const EventsContext = createContext<IEventsContext | null>(null);
 
 // local storage management
 const initialEvents: IEvent[] = JSON.parse(
-    localStorage.getItem(eventsLocalStorageUrl) || '[]',
+    localStorage.getItem(eventsLocalStorageUrl) || '{}',
 );
-function updateLocalStorage(events: IEvent[]) {
+function updateLocalStorage(events: savedEvents) {
     localStorage.setItem(eventsLocalStorageUrl, JSON.stringify(events));
 }
 

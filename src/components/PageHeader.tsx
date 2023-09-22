@@ -3,6 +3,7 @@ import { MdChevronLeft, MdChevronRight, MdMenu } from 'react-icons/md';
 import { googleLogoUrl } from '../App';
 import { useGlobalMonth } from '../contexts/MonthContext';
 import { useEventForm } from '../contexts/EventModalContext';
+import { convertToMonthAndYear } from '../utils/dateConvertions';
 
 const today = dayjs();
 
@@ -71,9 +72,7 @@ export default function CalendarHeader({ toggleSidebar }: ICalendarheader) {
                         </button>
                     </div>
                     <span className="text-xl font-normal text-gray-700">
-                        {dayjs()
-                            .month(globalMonthIndx)
-                            .format(`MMMM [de] YYYY`)}
+                        {convertToMonthAndYear(dayjs().month(globalMonthIndx))}
                     </span>
                 </div>
             </div>
