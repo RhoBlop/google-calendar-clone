@@ -1,5 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { MdAccessTime, MdClose, MdDelete, MdNotes } from 'react-icons/md';
+import {
+    MdAccessTime,
+    MdClose,
+    MdDelete,
+    MdDragHandle,
+    MdNotes,
+} from 'react-icons/md';
 import { useEventForm, useEventModal } from '../contexts/EventModalContext';
 import DatePicker from './DatePicker';
 import { useSavedEvents } from '../contexts/EventsContext';
@@ -56,6 +62,7 @@ export default function EventModal() {
                 type: 'DELETE',
                 payload: {
                     id: eventId,
+                    date: convertDateToSaveFormat(eventDay),
                 },
             });
             setModalAction(null);
@@ -80,12 +87,16 @@ export default function EventModal() {
             <div className="google-modal-shadow flex flex-1 flex-col border bg-white">
                 {/* modal header */}
                 <div className="flex items-center justify-between bg-gray-100 px-3 py-1">
-                    {modalAction === 'EDIT' && (
+                    {modalAction === 'EDIT' ? (
                         <button
                             onClick={handleDeleteEvent}
                             className="flex h-6 w-6 items-center justify-center rounded-full p-1 hover:bg-gray-200"
                         >
                             <MdDelete className="h-full w-full font-bold text-red-600" />
+                        </button>
+                    ) : (
+                        <button className="flex h-6 w-6 items-center justify-center rounded-full p-1 hover:bg-gray-200">
+                            <MdDragHandle className="h-full w-full font-bold text-gray-600" />
                         </button>
                     )}
                     <button
@@ -107,9 +118,11 @@ export default function EventModal() {
                                 placeholder="Adicionar título e horário"
                                 value={title}
                                 onChange={(e) => {
+                                    const text = e.currentTarget.value;
+
                                     setEventFormData((prev) => ({
                                         ...prev,
-                                        title: e.currentTarget.value,
+                                        title: text,
                                     }));
                                 }}
                                 ref={emailInput}
@@ -143,7 +156,7 @@ export default function EventModal() {
                             <textarea
                                 className="w-full resize-none overflow-auto overscroll-none border-[1px] border-gray-400 p-2 text-sm focus:border-blue-500 focus:ring-0"
                                 value={description}
-                                onInput={(e) => {
+                                onChange={(e) => {
                                     const textarea = e.currentTarget;
                                     // FIXME isn't working
                                     textarea.style.height = '';
@@ -167,17 +180,21 @@ export default function EventModal() {
                         <button
                             className="rounded bg-blue-500 px-5 py-[0.35rem] text-sm text-white transition-all hover:bg-blue-600"
                             onClick={() => {
-                                switch (modalAction) {
-                                    case 'CREATE':
-                                        handleCreateEvent();
-                                        break;
+                                if (title) {
+                                    switch (modalAction) {
+                                        case 'CREATE':
+                                            handleCreateEvent();
+                                            break;
 
-                                    case 'EDIT':
-                                        handleUpdateEvent();
-                                        break;
+                                        case 'EDIT':
+                                            handleUpdateEvent();
+                                            break;
 
-                                    default:
-                                        console.error('Invalid MODAL_ACTION');
+                                        default:
+                                            console.error(
+                                                'Invalid MODAL_ACTION',
+                                            );
+                                    }
                                 }
                             }}
                         >

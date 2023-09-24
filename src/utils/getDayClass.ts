@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 
+// didn't want to use a lib just for this use case
 export default function getDayClass(
     date: dayjs.Dayjs,
     activeMonthIndx: number,
