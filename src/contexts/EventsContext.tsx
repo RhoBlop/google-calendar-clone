@@ -40,33 +40,57 @@ function eventsReducer(state: savedEvents, { type, payload }: EventsAction) {
                     newEvents[payload.date] = [payload];
                 }
             }
-            updateLocalStorage(newEvents);
             break;
 
         case 'UPDATE':
             newEvents = { ...state };
-            if (state[payload.date]) {
-                newEvents[payload.date] = state[payload.date].map((evt) =>
-                    evt.id === payload.id ? payload : evt,
-                );
-                updateLocalStorage(newEvents);
+            // this is the bit where it became "kinda awkward" to change the data structure
+            for (let date of Object.keys(newEvents)) {
+                for (let evt of newEvents[date]) {
+                    if (evt && evt.id === payload.id) {
+                        if (evt.date === payload.date) {
+                            // date is the same, so we only map through the date's list
+                            // and substitute the older event for the newer one
+                            newEvents[payload.date] = newEvents[
+                                payload.date
+                            ].map((evt) =>
+                                evt.id === payload.id ? payload : evt,
+                            );
+                        } else {
+                            // date was edited, so we push the event to it's new date index
+                            // and delete where it was before (we move it from one list to the other)
+                            if (newEvents[payload.date]) {
+                                newEvents[payload.date].push(payload);
+                            } else {
+                                newEvents[payload.date] = [payload];
+                            }
+
+                            newEvents[date] = newEvents[date].filter(
+                                (e) => e.id !== evt.id,
+                            );
+                            if (newEvents[date].length === 0) {
+                                delete newEvents[date];
+                            }
+                        }
+                    }
+                }
             }
             break;
 
         case 'DELETE':
             newEvents = { ...state };
-            if (state[payload.date]) {
-                newEvents[payload.date] = state[payload.date].filter(
+            if (newEvents[payload.date]) {
+                newEvents[payload.date] = newEvents[payload.date].filter(
                     (evt) => evt.id !== payload.id,
                 );
             }
-            updateLocalStorage(newEvents);
             break;
 
         default:
             console.error('Invalid ACTION_TYPE');
             return state;
     }
+    updateLocalStorage(newEvents);
     return newEvents;
 }
 

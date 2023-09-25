@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
 // didn't want to use a lib just for this use case
+// TODO - create different functions for both sidebar callendar and datepicker
 export default function getDayClass(
     date: dayjs.Dayjs,
     activeMonthIndx: number,

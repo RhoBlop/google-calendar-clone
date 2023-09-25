@@ -7,6 +7,7 @@ import { convertToMonthAndYear } from '../utils/dateConvertions';
 
 interface ISmallCalendar {
     monthIndx: number;
+    propSelectedDate?: dayjs.Dayjs;
     handlePrevArrow: () => void;
     handleNextArrow: () => void;
     handleDayClick: (date: dayjs.Dayjs) => void;
@@ -14,8 +15,10 @@ interface ISmallCalendar {
 
 const smallCalendarHeader = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
+// TODO - Change selected day based on props
 export default function SmallCalendar({
     monthIndx,
+    propSelectedDate,
     handlePrevArrow,
     handleNextArrow,
     handleDayClick,
@@ -68,7 +71,11 @@ export default function SmallCalendar({
                             key={indx}
                             date={date}
                             monthIndx={monthIndx}
-                            isSelected={date.isSame(selectedDate, 'day')}
+                            isSelected={
+                                propSelectedDate
+                                    ? date.isSame(propSelectedDate)
+                                    : date.isSame(selectedDate, 'day')
+                            }
                             handleSelectDate={handleSelectDate}
                         />
                     );

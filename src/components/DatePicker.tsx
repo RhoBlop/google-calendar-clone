@@ -39,6 +39,7 @@ export default function DatePicker({ date, handleSelectDate }: DatePicker) {
                 <div className="absolute top-10 z-50 w-52 bg-black p-2 text-white">
                     <SmallCalendar
                         monthIndx={monthIndx}
+                        propSelectedDate={date}
                         handleDayClick={handleDayClick}
                         handleNextArrow={handleNextArrow}
                         handlePrevArrow={handlePrevArrow}
