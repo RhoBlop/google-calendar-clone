@@ -59,10 +59,16 @@ function eventsReducer(state: savedEvents, { type, payload }: EventsAction) {
                         } else {
                             // date was edited, so we push the event to it's new date index
                             // and delete where it was before (we move it from one list to the other)
-                            if (newEvents[payload.date]) {
-                                newEvents[payload.date].push(payload);
-                            } else {
-                                newEvents[payload.date] = [payload];
+                            if (
+                                !newEvents[payload.date]?.find(
+                                    (evt) => evt.id === payload.id,
+                                )
+                            ) {
+                                if (newEvents[payload.date]) {
+                                    newEvents[payload.date].push(payload);
+                                } else {
+                                    newEvents[payload.date] = [payload];
+                                }
                             }
 
                             newEvents[date] = newEvents[date].filter(

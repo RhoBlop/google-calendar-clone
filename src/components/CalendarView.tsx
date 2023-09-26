@@ -23,7 +23,7 @@ export default function CalendarView() {
             <div
                 className={`${
                     animDirection ? `${animDirection}-month-anim` : ''
-                } absolute inset-0 grid grid-cols-7 border-l border-gray-300`}
+                } absolute inset-0 grid grid-cols-7 grid-rows-5 border-l border-gray-300`}
                 key={globalMonthIndx}
             >
                 {fullMonth.map((date, indx) => {
@@ -56,7 +56,7 @@ function Day({ date, indx, monthIndx, dayEvents }: IDay) {
     const { setEventFormData } = useEventForm();
 
     return (
-        <div className={`flex border-b border-r border-gray-300 text-black `}>
+        <div className={`flex border-b border-r border-gray-300 text-black`}>
             <div className="flex flex-1 flex-col gap-2 text-xs">
                 <div className="flex flex-col items-center">
                     {indx < 7 && (

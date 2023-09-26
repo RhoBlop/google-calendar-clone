@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import SmallCalendar from './SmallCalendar';
+import { useOnClickOutside } from '../utils/useOnClickOutside';
 
 interface DatePicker {
     date: dayjs.Dayjs;
@@ -9,7 +10,9 @@ interface DatePicker {
 
 export default function DatePicker({ date, handleSelectDate }: DatePicker) {
     const [isActive, setIsActive] = useState(false);
-    const handleHideCalendar = () => setIsActive(false);
+    const datePickerRef = useRef<HTMLInputElement>(null);
+    const handleHideCalendar = useCallback(() => setIsActive(false), []);
+    useOnClickOutside(datePickerRef, handleHideCalendar, isActive);
 
     const { monthIndx, handlePrevArrow, handleNextArrow, handleDayClick } =
         useDatePickerCalendar({
@@ -19,7 +22,7 @@ export default function DatePicker({ date, handleSelectDate }: DatePicker) {
         });
 
     return (
-        <div className="relative">
+        <div className="relative" ref={datePickerRef}>
             <div
                 className={`${
                     isActive
@@ -36,7 +39,7 @@ export default function DatePicker({ date, handleSelectDate }: DatePicker) {
             </div>
 
             {isActive && (
-                <div className="absolute top-10 z-50 w-52 bg-black p-2 text-white">
+                <div className="date-picker-shadow absolute top-10 z-50 w-52 rounded-sm bg-white p-2">
                     <SmallCalendar
                         monthIndx={monthIndx}
                         propSelectedDate={date}
