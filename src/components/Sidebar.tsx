@@ -35,7 +35,7 @@ function SideBarCallendar() {
     };
 
     function handleDayClick(date: dayjs.Dayjs) {
-        handleSetGlobalMonth({ monthIndx: date.month() });
+        handleSetGlobalMonth({ monthIndx: smCalMonthIndx });
         setEventFormData((prev) => ({ ...prev, eventDay: date }));
     }
 

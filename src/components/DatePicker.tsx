@@ -26,9 +26,9 @@ export default function DatePicker({ date, handleSelectDate }: DatePicker) {
             <div
                 className={`${
                     isActive
-                        ? 'border-blue-500 bg-gray-100'
+                        ? 'border-b-blue-500 border-t-transparent bg-gray-100'
                         : 'border-transparent bg-transparent'
-                } cursor-text rounded-sm border-b-[3px] px-2 py-1 transition-colors ease-in hover:bg-gray-100`}
+                } cursor-text rounded-sm border-b-[3px] border-t-[3px] px-2 py-1 transition-colors ease-in hover:bg-gray-100`}
                 onClick={() => {
                     setIsActive(true);
                 }}

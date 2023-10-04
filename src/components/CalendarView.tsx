@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { useGlobalMonth } from '../contexts/MonthContext';
-import getDayClass from '../utils/getDayClass';
+import getDayClass from '../utils/getDayStyles';
 import getMonthDates from '../utils/getMonthDates';
 import { useSavedEvents, IEvent } from '../contexts/EventsContext';
 import { convertDateToSaveFormat } from '../utils/dateConvertions';

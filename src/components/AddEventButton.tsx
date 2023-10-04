@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { ReactComponent as GooglePlus } from '../assets/GooglePlus.svg';
 import { useEventForm, useEventModal } from '../contexts/EventModalContext';
 
@@ -18,12 +17,12 @@ export default function AddEventButton({ isSidebarOpen }: IAddEventButton) {
             <button
                 onClick={() => {
                     setModalAction('CREATE');
-                    setEventFormData({
+                    setEventFormData((prevState) => ({
+                        ...prevState,
                         eventId: null,
-                        eventDay: dayjs(),
                         title: '',
                         description: '',
-                    });
+                    }));
                 }}
                 className="google-create rounded-full bg-white px-2 py-1 text-sm font-medium text-gray-600 transition-all"
             >

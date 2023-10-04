@@ -66,33 +66,31 @@ export default function MonthProvider({
         let newMonthIndx: number | null = null;
         let newAnimDirection: typeof animDirection = null;
 
-        if (monthIndx) {
+        if (typeof monthIndx === 'number') {
             newMonthIndx = monthIndx;
-        } else if (incrementVal) {
+        } else if (typeof incrementVal === 'number') {
             newMonthIndx = globalMonthIndx + incrementVal;
         }
 
-        if (!newMonthIndx) {
-            return;
-        }
-        if (newMonthIndx > globalMonthIndx) {
-            newAnimDirection = 'next';
-        } else if (newMonthIndx < globalMonthIndx) {
-            newAnimDirection = 'prev';
-        }
-
-        setGlobalMonth((prevState) => {
-            if (!newMonthIndx) {
-                return prevState;
+        if (typeof newMonthIndx === 'number') {
+            if (newMonthIndx > globalMonthIndx) {
+                newAnimDirection = 'next';
+            } else if (newMonthIndx < globalMonthIndx) {
+                newAnimDirection = 'prev';
             }
+            setGlobalMonth((prevState) => {
+                if (typeof newMonthIndx !== 'number') {
+                    return prevState;
+                }
 
-            return {
-                ...prevState,
-                globalMonthIndx: newMonthIndx,
-                animDirection: newAnimDirection,
-            };
-        });
-        setSmCalMonthIndx(newMonthIndx);
+                return {
+                    ...prevState,
+                    globalMonthIndx: newMonthIndx,
+                    animDirection: newAnimDirection,
+                };
+            });
+            setSmCalMonthIndx(newMonthIndx);
+        }
     }
 
     return (

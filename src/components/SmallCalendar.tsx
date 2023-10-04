@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
-import getDayClass from '../utils/getDayClass';
+import getDayClass from '../utils/getDayStyles';
 import getMonthDates from '../utils/getMonthDates';
 import { convertToMonthAndYear } from '../utils/dateConvertions';
 
@@ -15,7 +15,6 @@ interface ISmallCalendar {
 
 const smallCalendarHeader = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
-// TODO - Change selected day based on props
 export default function SmallCalendar({
     monthIndx,
     propSelectedDate,
